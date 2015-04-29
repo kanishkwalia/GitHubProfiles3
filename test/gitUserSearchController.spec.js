@@ -1,10 +1,11 @@
-describe('GitUserSearchController',function(){
+describe('GitUserSearchController', function(){
   beforeEach(module('GitUserSearch'));
 
   var ctrl;
 
+
   beforeEach(inject(function($controller){
-    ctrl = $controller('GitUserSearchController')
+    ctrl = $controller('GitUserSearchController');
   }));
 
   it('initializes with an empty search result and term', function(){
@@ -12,7 +13,17 @@ describe('GitUserSearchController',function(){
     expect(ctrl.searchTerm).toBeUndefined();
   });
 
+
   describe('when searching for a user', function() {
+    var httpBackend;
+    beforeEach(inject(function($httpBackend) {
+      httpBackend = $httpBackend
+      httpBackend
+      .when("GET", "https://api.github.com/search/users?access_token=027243cbc6861e2d7e31194da4cae9888cafd101&q-hello")
+      .respond(
+        { items: items }
+        );
+    }));
 
     var items = [
     {
@@ -25,11 +36,12 @@ describe('GitUserSearchController',function(){
       "avatar_url": "https://avatars.githubusercontent.com/u/196474?v=3",
       "html_url": "https://github.com/stephenlloyd"
     }
-  ];
+    ];
 
     it('displays search results', function() {
       ctrl.searchTerm = 'hello';
       ctrl.doSearch();
+      httpBackend.flush();
       expect(ctrl.searchResult.items).toEqual(items);
     });
   });
